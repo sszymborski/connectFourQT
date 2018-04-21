@@ -22,7 +22,7 @@ public:
     int freeBlocks;
 
 
-    Game(int depth=5);
+    Game(int depth);
     ~Game();
 
     int start(int);

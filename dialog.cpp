@@ -2,8 +2,9 @@
 #include "ui_dialog.h"
 
 #include <QPointF>
+#include <QTimeLine>
 
-Dialog::Dialog(QWidget *parent) :
+Dialog::Dialog(int level, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
 {
@@ -21,7 +22,8 @@ Dialog::Dialog(QWidget *parent) :
             react[i*j] = scene->addRect(SIZE*j, SIZE*i, SIZE, SIZE);
         }
     }
-    game = new Game();
+    hardLevel = level;
+    game = new Game(hardLevel);
 }
 
 void Dialog::mousePressEvent(QMouseEvent * e)
@@ -52,7 +54,7 @@ void Dialog::mousePressEvent(QMouseEvent * e)
                 }
                 else
                 {
-                    QMessageBox::information(this, tr("Connect4"), tr("Draw") );
+                    QMessageBox::information(this, tr("Connect4"), tr("Draw by AI") );
                     this->on_resetButton_clicked();
                 }
             }
@@ -63,7 +65,7 @@ void Dialog::mousePressEvent(QMouseEvent * e)
             }
             else
             {
-                    QMessageBox::information(this, tr("Connect4"), tr("Draw") );
+                    QMessageBox::information(this, tr("Connect4"), tr("Draw by U") );
                     this->on_resetButton_clicked();
             }
         }
@@ -78,7 +80,29 @@ void Dialog::drawEclipse(int column, int row, bool player)
     QBrush redBrush(Qt::red);
     QBrush yellowBrush(Qt::yellow);
     QPen outlinePen(Qt::black);
+
     ellipse[lastEclipse++] = scene->addEllipse(SIZE*column, SIZE*row, SIZE, SIZE, outlinePen, player?redBrush:yellowBrush);
+
+
+
+
+   // for(int i = 0; i < SIZE*row; ++i){
+
+   // ellipse[lastEclipse]->setPos(SIZE*column,i);
+    //_sleep(1);
+
+   // }
+
+   //     ellipse[lastEclipse]->setPos(SIZE*column,SIZE*row);
+    //ellipse[lastEclipse] = scene->addEllipse(SIZE*column, SIZE*row, SIZE, SIZE, outlinePen, player?redBrush:yellowBrush);
+
+    //lastEclipse++;
+}
+
+void Dialog::advance(int step)
+{
+    ellipse[lastEclipse]->setPos(0, 0);
+    cout << "lol";
 }
 
 Dialog::~Dialog()
@@ -90,7 +114,7 @@ Dialog::~Dialog()
 void Dialog::on_resetButton_clicked()
 {
     delete game;
-    game = new Game();
+    game = new Game(hardLevel);
     for(int i =0; i < lastEclipse; ++i)
         scene->removeItem(ellipse[i]);
     lastEclipse = 0;

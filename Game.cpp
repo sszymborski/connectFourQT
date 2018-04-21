@@ -12,7 +12,7 @@ Game::Game(int depth1)
     for(int i = 0; i < WIDTH; ++i)
         for(int j = 0; j < HEIGHT; ++j)
             board[i][j] = 0;
-    int freeBlocks = WIDTH*HEIGHT;
+    freeBlocks = WIDTH*HEIGHT;
 }
 
 Game::~Game()
@@ -40,7 +40,6 @@ int Game::start(int colNumber)
 int Game::testSituation()
 {
     bool isWon = checkWin();
-
     if(isWon || freeBlocks == 0) // jesli wygrana lub remis
     {
         if(freeBlocks == 0 && !isWon)

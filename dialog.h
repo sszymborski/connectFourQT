@@ -11,6 +11,8 @@
 #include <QGraphicsItem>
 #include <QMouseEvent>
 #include <QMessageBox>
+#include <QPropertyAnimation>
+#include <QTimer>
 
 #include"Game.h"
 
@@ -24,7 +26,7 @@ class Dialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit Dialog(QWidget *parent = 0);
+    explicit Dialog(int level, QWidget *parent = 0);
     void drawEclipse(int, int, bool);
     ~Dialog();
 
@@ -36,6 +38,9 @@ public slots:
 private slots:
     void on_resetButton_clicked();
 
+protected:
+    void advance(int step);
+
 private:
     Ui::Dialog *ui;
 
@@ -45,10 +50,12 @@ private:
 
     QPushButton *quitButton;
     QPushButton *resetButton;
-
+    QTimer *timer;
     Game *game;
 
     int lastEclipse;
+    int gravity;
+    int hardLevel;
 
     // QGraphicsTextItem *text;
 };
