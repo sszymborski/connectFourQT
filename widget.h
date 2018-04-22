@@ -5,7 +5,8 @@
 
 #include "dialog.h"
 
-namespace Ui {
+namespace Ui
+{
 class Widget;
 }
 
@@ -19,7 +20,6 @@ public:
 
 private slots:
     void on_spinBox_valueChanged(int arg1);
-
     void on_startButton_clicked();
 
 private:

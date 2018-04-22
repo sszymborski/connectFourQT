@@ -39,7 +39,7 @@ private slots:
     void on_resetButton_clicked();
 
 protected:
-    void advance(int step);
+    void advance(int phase);
 
 private:
     Ui::Dialog *ui;
@@ -56,6 +56,7 @@ private:
     int lastEclipse;
     int gravity;
     int hardLevel;
+
 
     // QGraphicsTextItem *text;
 };

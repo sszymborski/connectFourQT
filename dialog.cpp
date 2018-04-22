@@ -1,6 +1,8 @@
 #include "dialog.h"
 #include "ui_dialog.h"
 
+#include "myItem.h"
+
 #include <QPointF>
 #include <QTimeLine>
 
@@ -8,23 +10,40 @@ Dialog::Dialog(int level, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
 {
-    lastEclipse = 0;
     ui->setupUi(this);
-
     scene = new QGraphicsScene(this);
-    ui->graphicsView->setSceneRect(0, 0, 350, 300);
     ui->graphicsView->setScene(scene);
-
-    for(int i = 0; i < LENGHT; ++i)
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+    scene->setSceneRect(0, 0, 350, 300);
+    QLineF topLine(scene->sceneRect().topLeft(),
+                   scene->sceneRect().topRight());
+    QLineF leftLine(scene->sceneRect().topLeft(),
+                    scene->sceneRect().bottomLeft());
+    QLineF rightLine(scene->sceneRect().topRight(),
+                     scene->sceneRect().bottomRight());
+    QLineF bottomLine(scene->sceneRect().bottomLeft(),
+                      scene->sceneRect().bottomRight());
+    QPen myPen = QPen(Qt::black);
+    QBrush myBrush = QBrush();
+    for(int i = 0; i < 6; ++i)
     {
-        for(int j = 0; j < WIDTH; ++j)
-        {
-            react[i*j] = scene->addRect(SIZE*j, SIZE*i, SIZE, SIZE);
-        }
+        scene->addLine(0,50*i,350,50*i,myPen);
     }
+    for(int i = 0; i < 7; ++i)
+    {
+        scene->addLine(50*i,0,50*i,300,myPen);
+    }
+    scene->addLine(topLine, myPen);
+    scene->addLine(leftLine, myPen);
+    scene->addLine(rightLine, myPen);
+    scene->addLine(bottomLine, myPen);
+    lastEclipse = 0;
     hardLevel = level;
     game = new Game(hardLevel);
+
 }
+
+
 
 void Dialog::mousePressEvent(QMouseEvent * e)
 {
@@ -39,6 +58,7 @@ void Dialog::mousePressEvent(QMouseEvent * e)
         if(game->board[finalX][0]==0)
         {
             drawEclipse(finalX,game->start(finalX),true);
+
             if(game->testSituation()==0)
             {
                 int oponentX = game->oponent();
@@ -60,50 +80,29 @@ void Dialog::mousePressEvent(QMouseEvent * e)
             }
             else if(game->testSituation()==1)
             {
-                    QMessageBox::information(this, tr("Connect4"), tr("You win!") );
-                    this->on_resetButton_clicked();
+                QMessageBox::information(this, tr("Connect4"), tr("You win!") );
+                this->on_resetButton_clicked();
             }
             else
             {
-                    QMessageBox::information(this, tr("Connect4"), tr("Draw by U") );
-                    this->on_resetButton_clicked();
+                QMessageBox::information(this, tr("Connect4"), tr("Draw by U") );
+                this->on_resetButton_clicked();
             }
         }
-
     }
-
+    scene->update(0,0,350,300);
 }
 
 
 void Dialog::drawEclipse(int column, int row, bool player)
 {
-    QBrush redBrush(Qt::red);
-    QBrush yellowBrush(Qt::yellow);
-    QPen outlinePen(Qt::black);
-
-    ellipse[lastEclipse++] = scene->addEllipse(SIZE*column, SIZE*row, SIZE, SIZE, outlinePen, player?redBrush:yellowBrush);
-
-
-
-
-   // for(int i = 0; i < SIZE*row; ++i){
-
-   // ellipse[lastEclipse]->setPos(SIZE*column,i);
-    //_sleep(1);
-
-   // }
-
-   //     ellipse[lastEclipse]->setPos(SIZE*column,SIZE*row);
-    //ellipse[lastEclipse] = scene->addEllipse(SIZE*column, SIZE*row, SIZE, SIZE, outlinePen, player?redBrush:yellowBrush);
-
-    //lastEclipse++;
+    MyItem *item = new MyItem(column,row,player);
+    scene->addItem(item);
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()),scene, SLOT(advance()));
+    timer->start(10);
 }
 
-void Dialog::advance(int step)
-{
-    ellipse[lastEclipse]->setPos(0, 0);
-    cout << "lol";
-}
 
 Dialog::~Dialog()
 {
@@ -118,4 +117,30 @@ void Dialog::on_resetButton_clicked()
     for(int i =0; i < lastEclipse; ++i)
         scene->removeItem(ellipse[i]);
     lastEclipse = 0;
+    qDeleteAll(scene->items());
+    QLineF topLine(scene->sceneRect().topLeft(),
+                   scene->sceneRect().topRight());
+    QLineF leftLine(scene->sceneRect().topLeft(),
+                    scene->sceneRect().bottomLeft());
+    QLineF rightLine(scene->sceneRect().topRight(),
+                     scene->sceneRect().bottomRight());
+    QLineF bottomLine(scene->sceneRect().bottomLeft(),
+                      scene->sceneRect().bottomRight());
+    QPen myPen = QPen(Qt::black);
+    QBrush myBrush = QBrush();
+    for(int i = 0; i < 6; ++i)
+    {
+        scene->addLine(0,50*i,350,50*i,myPen);
+    }
+    for(int i = 0; i < 7; ++i)
+    {
+        scene->addLine(50*i,0,50*i,300,myPen);
+    }
+    scene->addLine(topLine, myPen);
+    scene->addLine(leftLine, myPen);
+    scene->addLine(rightLine, myPen);
+    scene->addLine(bottomLine, myPen);
+    scene->update(0,0,350,300);
 }
+
+

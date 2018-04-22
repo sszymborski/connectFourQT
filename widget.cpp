@@ -23,8 +23,8 @@ void Widget::on_startButton_clicked()
 {
     if(level>0)
     {
-    Dialog *dialog = new Dialog(level);
-    dialog->exec();
+        Dialog *dialog = new Dialog(level);
+        dialog->exec();
     }
     else
     {
